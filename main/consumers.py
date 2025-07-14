@@ -18,7 +18,6 @@ class TimeZoneConsumer(AsyncWebsocketConsumer):
         )
 
     async def receive(self, text_data):
-        # This consumer is for server push only; clients don't send messages
         pass
 
     async def send_time(self, event):
