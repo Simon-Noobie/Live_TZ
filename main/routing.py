@@ -4,7 +4,7 @@ from channels.auth import AuthMiddlewareStack
 from main.consumers import TimeZoneConsumer
 
 websocket_urlpatterns = [
-    re_path(r'ws/time/(?P<timezone>[^/]+)/$', TimeZoneConsumer.as_asgi()),
+    re_path(r'^ws/time/(?P<timezone>.+)/$', TimeZoneConsumer.as_asgi()),
 ]
 
 application = ProtocolTypeRouter({

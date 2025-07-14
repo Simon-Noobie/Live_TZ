@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Time Zones</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .tz-block { margin: 20px; padding: 20px; border: 1px solid #ccc; display: inline-block; }
+    </style>
+</head>
+<body>
+    <h1>Live Time Zones</h1>
+    <div id="timezones">
+        <div class="tz-block" id="UTC">UTC: <span class="time">Loading...</span></div>
+        <div class="tz-block" id="America/New_York">New York: <span class="time">Loading...</span></div>
+        <div class="tz-block" id="Europe/London">London: <span class="time">Loading...</span></div>
+        <div class="tz-block" id="Asia/Kolkata">Kolkata: <span class="time">Loading...</span></div>
+    </div>
+    <script>
+        const zones = [
+            { id: 'UTC', label: 'UTC' },
+            { id: 'America/New_York', label: 'New York' },
+            { id: 'Europe/London', label: 'London' },
+            { id: 'Asia/Kolkata', label: 'Kolkata' }
+        ];
+        zones.forEach(zone => {
+            const ws = new WebSocket(`ws://${window.location.host}/ws/time/${encodeURIComponent(zone.id)}/`);
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                document.querySelector(`#${CSS.escape(zone.id)} .time`).textContent = data.time;
+            };
+            ws.onerror = function() {
+                document.querySelector(`#${CSS.escape(zone.id)} .time`).textContent = 'WebSocket error';
+            };
+        });
+    </script>
+</body>
+</html>
+
