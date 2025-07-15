@@ -2,15 +2,27 @@ from django import forms
 from django.contrib.auth.models import User
 from .models import UserProfile
 
+TIMEZONE_CHOICES = [
+    ('UTC', 'UTC'),
+    ('New York', 'New York'),
+    ('London', 'London'),
+    ('Kolkata', 'Kolkata'),
+]
+
 class RegisterForm(forms.ModelForm):
+    username = forms.CharField(max_length=150)
     password = forms.CharField(widget=forms.PasswordInput)
     name = forms.CharField(max_length=100)
     email = forms.EmailField()
-    username = forms.CharField(max_length=150)
+    timezones = forms.MultipleChoiceField(
+        choices=TIMEZONE_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
 
     class Meta:
         model = UserProfile
-        fields = ['name', 'email', 'password']
+        fields = ['name', 'email', 'timezones']
 
     def save(self, commit=True):
         user = User.objects.create_user(
@@ -23,6 +35,7 @@ class RegisterForm(forms.ModelForm):
         profile.email = self.cleaned_data['email']
         profile.name = self.cleaned_data['name']
         profile.password = user.password  # hashed password
+        profile.timezones = self.cleaned_data['timezones']
         if commit:
             profile.save()
         return profile
