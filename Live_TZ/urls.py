@@ -16,9 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from main.views import timezones_view
+from django.urls import include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', timezones_view, name='timezones'),
+    path('', include('main.urls')),  # Include the main app's URLs
 ]
