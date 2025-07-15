@@ -5,6 +5,7 @@
     <title>Login - Model Management System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token }}">
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
     <div class="bg-white p-8 rounded shadow-md w-full max-w-sm">
@@ -30,3 +31,31 @@
             </button>
         </div>
     </div>
+    <script>
+        function getCSRFToken() {
+            return document.querySelector('[name=csrf-token]').content;
+        }
+
+        function login() {
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value;
+
+            axios.post('/login/', {
+                username,
+                password
+            }, {
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
+                }
+            }).then(response => {
+                if (response.data.success) {
+                    window.location.href = response.data.redirect_url;
+                } else {
+                    alert("Invalid username or password.");
+                }
+            }).catch(error => {
+                alert("Login request failed.");
+            });
+        }
+    </script>
+</body></html>

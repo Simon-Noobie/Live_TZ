@@ -148,3 +148,5 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': 1.0,  # every second
     },
 }
+
+LOGIN_URL = '/login/'

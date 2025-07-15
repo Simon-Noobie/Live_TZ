@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,6 +10,14 @@
     </style>
 </head>
 <body>
+    <div style="background: #f8f8f8; padding: 10px; display: flex; justify-content: space-between;">
+        <div>Welcome, {{ request.user.username }}</div>
+        <form action="/logout/" method="post" style="margin: 0;">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    </div>
+    <hr>
     <h1>Live Time Zones</h1>
     <div id="timezones">
         <div class="tz-block" id="UTC">UTC: <span class="time">Loading...</span></div>
@@ -36,4 +45,3 @@
     </script>
 </body>
 </html>
-
