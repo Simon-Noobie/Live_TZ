@@ -20,27 +20,33 @@
     <hr>
     <h1>Live Time Zones</h1>
     <div id="timezones">
-        <div class="tz-block" id="UTC">UTC: <span class="time">Loading...</span></div>
-        <div class="tz-block" id="America/New_York">New York: <span class="time">Loading...</span></div>
-        <div class="tz-block" id="Europe/London">London: <span class="time">Loading...</span></div>
-        <div class="tz-block" id="Asia/Kolkata">Kolkata: <span class="time">Loading...</span></div>
+        {% for code, label in all_timezones %}
+            {% if code in selected_timezones %}
+                <div class="tz-block" id="{{ code }}">{{ label }}: <span class="time">Loading...</span></div>
+            {% else %}
+                <div class="tz-block" id="{{ code }}">{{ label }}: <span class="time">Timezone not selected</span></div>
+            {% endif %}
+        {% endfor %}
     </div>
+
     <script>
-        const zones = [
-            { id: 'UTC', label: 'UTC' },
-            { id: 'America/New_York', label: 'New York' },
-            { id: 'Europe/London', label: 'London' },
-            { id: 'Asia/Kolkata', label: 'Kolkata' }
-        ];
-        zones.forEach(zone => {
-            const ws = new WebSocket(`ws://${window.location.host}/ws/time/${encodeURIComponent(zone.id)}/`);
-            ws.onmessage = function(event) {
-                const data = JSON.parse(event.data);
-                document.querySelector(`#${CSS.escape(zone.id)} .time`).textContent = data.time;
-            };
-            ws.onerror = function() {
-                document.querySelector(`#${CSS.escape(zone.id)} .time`).textContent = 'WebSocket error';
-            };
+        const timezones = Array.from(document.querySelectorAll('.tz-block')).map(el => ({
+            id: el.id,
+            label: el.textContent.split(':')[0]
+        }));
+
+        timezones.forEach(zone => {
+            const timeSpan = document.querySelector(`#${CSS.escape(zone.id)} .time`);
+            if (timeSpan.textContent !== "Timezone not selected") {
+                const ws = new WebSocket(`ws://${window.location.host}/ws/time/${encodeURIComponent(zone.id)}/`);
+                ws.onmessage = function(event) {
+                    const data = JSON.parse(event.data);
+                    timeSpan.textContent = data.time;
+                };
+                ws.onerror = function() {
+                    timeSpan.textContent = 'WebSocket error';
+                };
+            }
         });
     </script>
 </body>

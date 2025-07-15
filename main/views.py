@@ -8,7 +8,23 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 @login_required
 def timezones_view(request):
-    return render(request, 'main/timezones.html')
+    user_profile = request.user.userprofile
+    all_timezones = [
+        ('UTC', 'UTC'),
+        ('America/New_York', 'New York'),
+        ('Europe/London', 'London'),
+        ('Asia/Kolkata', 'Kolkata'),
+    ]
+    selected = user_profile.timezones if user_profile.timezones else []
+
+    selected_timezones = {code: label for code, label in all_timezones if code in selected}
+    unselected_timezones = {code: label for code, label in all_timezones if code not in selected}
+
+    return render(request, 'main/timezones.html', {
+        'selected_timezones': selected_timezones,
+        'unselected_timezones': unselected_timezones,
+        'all_timezones': all_timezones,
+    })
 
 def login_view(request):
     if request.method == 'POST':
@@ -46,7 +62,7 @@ def register_view(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('login')  # Assumes you have a login view named 'login'
+            return redirect('/login/')  # Changed to redirect to the login URL path
     else:
         form = RegisterForm()
     return render(request, 'main/register.html', {'form': form})

@@ -4,16 +4,16 @@ from .models import UserProfile
 
 TIMEZONE_CHOICES = [
     ('UTC', 'UTC'),
-    ('New York', 'New York'),
-    ('London', 'London'),
-    ('Kolkata', 'Kolkata'),
+    ('America/New_York', 'New York'),
+    ('Europe/London', 'London'),
+    ('Asia/Kolkata', 'Kolkata'),
 ]
 
 class RegisterForm(forms.ModelForm):
-    username = forms.CharField(max_length=150)
-    password = forms.CharField(widget=forms.PasswordInput)
     name = forms.CharField(max_length=100)
     email = forms.EmailField()
+    username = forms.CharField(max_length=150)
+    password = forms.CharField(widget=forms.PasswordInput)
     timezones = forms.MultipleChoiceField(
         choices=TIMEZONE_CHOICES,
         widget=forms.CheckboxSelectMultiple,
